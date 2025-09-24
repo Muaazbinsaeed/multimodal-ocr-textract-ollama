@@ -1,0 +1,11 @@
+# Supported Ollama Multimodal Models
+# Default model (first line will be used as default)
+moondream:1.8b
+llava:latest
+llama3.2-vision:latest
+moondream:1.8b
+
+# Additional Vision Models (optional)
+# qwen2-vl:latest
+# bakllava:latest
+# minicpm-v:latest

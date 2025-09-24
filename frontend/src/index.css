@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 217 91% 95%;
+    --accent-foreground: 217 91% 60%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 60%;
+
+    /* Upload zone colors */
+    --upload-bg: 217 91% 98%;
+    --upload-border: 217 91% 85%;
+    --upload-hover: 217 91% 95%;
+    --upload-active: 217 91% 92%;
+
+    /* Success and processing states */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --processing: 217 91% 60%;
+    --processing-foreground: 0 0% 100%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 13% 18%;
+    --foreground: 0 0% 100%;
+
+    --card: 220 13% 18%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 220 13% 18%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 217 91% 70%;
+    --primary-foreground: 220 13% 18%;
+
+    --secondary: 220 13% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 13% 25%;
+    --muted-foreground: 220 9% 65%;
+
+    --accent: 220 13% 25%;
+    --accent-foreground: 217 91% 70%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 25%;
+    --input: 220 13% 25%;
+    --ring: 217 91% 70%;
+    
+    --upload-bg: 220 13% 20%;
+    --upload-border: 217 91% 30%;
+    --upload-hover: 220 13% 22%;
+    --upload-active: 220 13% 24%;
+    
+    --success: 142 76% 45%;
+    --success-foreground: 220 13% 18%;
+    --processing: 217 91% 70%;
+    --processing-foreground: 220 13% 18%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
