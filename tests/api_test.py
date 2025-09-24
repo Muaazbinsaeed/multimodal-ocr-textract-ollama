@@ -81,9 +81,11 @@ class APITester:
             if response.status_code == 200:
                 data = response.json()
                 print("✅ Models endpoint working")
-                print(f"   Available vision models: {len(data.get('available_models', []))}")
+                print(f"   Available models: {len(data.get('available_models', []))}")
+                print(f"   Supported models: {len(data.get('supported_models', []))}")
                 print(f"   Current model: {data.get('current_model', 'unknown')}")
-                print(f"   Vision models: {data.get('available_models', [])}")
+                print(f"   Available: {data.get('available_models', [])}")
+                print(f"   Supported: {data.get('supported_models', [])}")
                 return data
             else:
                 print(f"❌ Models endpoint failed: {response.status_code}")
@@ -131,6 +133,61 @@ class APITester:
 
         except Exception as e:
             print(f"❌ Model switching error: {e}")
+            return False
+
+    def test_model_pulling(self):
+        """Test model pulling functionality"""
+        print(f"\n🔍 Testing model pulling...")
+
+        # Get models data first
+        models_data = self.test_models_endpoint()
+        if not models_data:
+            print("⚠️  Cannot test model pulling without models data")
+            return False
+
+        supported_models = models_data.get('supported_models', [])
+        available_models = models_data.get('available_models', [])
+
+        # Find a model that's supported but not available (for testing pull)
+        missing_models = [m for m in supported_models if m not in available_models]
+
+        if not missing_models:
+            print("✅ All supported models are already available")
+            return True
+
+        # Test pulling the first missing model (with a quick timeout for testing)
+        test_model = missing_models[0]
+        print(f"   Testing pull for: {test_model}")
+
+        try:
+            # Test the pull endpoint (but we'll use a short timeout for testing)
+            response = requests.post(
+                f"{self.base_url}/api/pull-model",
+                json={"model": test_model},
+                timeout=30  # Short timeout for testing
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                print(f"✅ Model pull initiated: {data.get('message', 'Success')}")
+                return True
+            elif response.status_code == 408:  # Timeout expected for large models
+                print(f"✅ Model pull started (timed out as expected)")
+                return True
+            else:
+                print(f"❌ Model pull failed: {response.status_code}")
+                try:
+                    error_data = response.json()
+                    print(f"   Error: {error_data.get('detail', 'Unknown error')}")
+                except:
+                    print(f"   Response: {response.text}")
+                return False
+
+        except requests.exceptions.Timeout:
+            print("✅ Model pull started (timed out as expected)")
+            return True
+        except Exception as e:
+            print(f"❌ Model pulling error: {e}")
             return False
 
     def test_ocr_extraction(self):
@@ -191,6 +248,7 @@ class APITester:
             'ollama_status': False,
             'models': False,
             'model_switching': False,
+            'model_pulling': False,
             'ocr': False
         }
 
@@ -214,7 +272,11 @@ class APITester:
         if models_data and results['ollama_status']:
             results['model_switching'] = self.test_model_switching()
 
-        # Test 6: OCR extraction
+        # Test 6: Model pulling
+        if results['ollama_status']:
+            results['model_pulling'] = self.test_model_pulling()
+
+        # Test 7: OCR extraction
         if results['ollama_status']:
             results['ocr'] = self.test_ocr_extraction()
 

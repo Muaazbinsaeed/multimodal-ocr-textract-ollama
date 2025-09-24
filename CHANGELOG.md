@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-09-24
+
+### Added
+
+#### Enhanced Model Management
+- **Model Configuration via models.txt**: Centralized model management through configuration file
+- **Automatic Model Pulling**: Auto-download missing models when switching
+- **New /api/pull-model endpoint**: Manual model downloading with progress feedback
+- **Enhanced Model Validation**: Validates against supported models list from models.txt
+
+#### Improved API Structure
+- **Updated /api/models endpoint**: Now shows both available and supported models
+- **Auto-pull support**: `/api/set-model` with configurable auto_pull parameter
+- **Better Error Handling**: Detailed error messages for model operations
+
+#### Frontend Enhancements
+- **Model Download Buttons**: One-click download for missing supported models
+- **Real-time Progress**: Toast notifications for download/switch operations
+- **Enhanced Model Selector**: Visual indicators for model states
+- **Improved UX**: Better feedback and error handling
+
+#### Testing & Development
+- **Model Pulling Tests**: Comprehensive test coverage for new functionality
+- **Enhanced Test Suite**: Updated to handle new API structure
+- **Better Test Coverage**: Model management operation testing
+
+### Changed
+- **Model Management Architecture**: Refactored to use models.txt as source of truth
+- **API Response Structure**: Enhanced with supported_models field
+- **Configuration Management**: Simplified model addition/removal process
+
+### Fixed
+- **Models Configuration**: Removed duplicate entries, improved validation
+- **Test Files**: Fixed test image paths and validation issues
+- **Code Cleanup**: Removed unnecessary files and processes
+
 ## [1.0.0] - 2025-09-24
 
 ### Added

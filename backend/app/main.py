@@ -12,6 +12,7 @@ from .errors import (
 )
 from .image_utils import validate_and_encode_image
 from .ollama_client import ollama_client
+from .model_utils import read_models_from_file, is_supported_model
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -105,22 +106,28 @@ async def extract_text(file: UploadFile = File(...)):
 
 @app.get("/api/models")
 async def get_available_models():
-    """Get list of available Ollama models"""
+    """Get list of available Ollama models based on models.txt"""
     try:
         import httpx
 
+        # Get supported models from models.txt
+        supported_models = read_models_from_file()
+
+        # Get models available in Ollama
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(f"{settings.ollama_host}/api/tags")
             if response.status_code == 200:
                 data = response.json()
-                models = [model['name'] for model in data.get('models', [])]
-                # Filter for multimodal models (those that can handle images)
-                vision_models = [m for m in models if any(keyword in m.lower() for keyword in ['llava', 'moondream', 'vision', 'bakllava', 'qwen2-vl', 'minicpm-v'])]
+                installed_models = [model['name'] for model in data.get('models', [])]
+
+                # Filter supported models to show only those that are installed
+                available_models = [m for m in supported_models if m in installed_models]
 
                 return {
-                    "available_models": vision_models,
+                    "available_models": available_models,
+                    "supported_models": supported_models,
                     "current_model": settings.ollama_model,
-                    "all_models": models
+                    "all_models": installed_models
                 }
             else:
                 raise HTTPException(status_code=503, detail="Cannot connect to Ollama")
@@ -132,23 +139,69 @@ async def get_available_models():
 
 @app.post("/api/set-model")
 async def set_model(model_data: dict):
-    """Set the active Ollama model"""
+    """Set the active Ollama model with auto-pull if needed"""
     model_name = model_data.get('model')
+    auto_pull = model_data.get('auto_pull', True)  # Auto-pull by default
+
     if not model_name:
         raise HTTPException(status_code=400, detail="Model name required")
 
+    # Check if model is in supported models list
+    if not is_supported_model(model_name):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Model '{model_name}' is not in the supported models list"
+        )
+
     try:
-        # Validate model exists in Ollama
         import httpx
+        import subprocess
 
         async with httpx.AsyncClient(timeout=10.0) as client:
+            # Check if model exists in Ollama
             response = await client.get(f"{settings.ollama_host}/api/tags")
             if response.status_code == 200:
                 data = response.json()
                 available_models = [model['name'] for model in data.get('models', [])]
 
-                if model_name not in available_models:
-                    raise HTTPException(status_code=400, detail=f"Model '{model_name}' not found in Ollama")
+                # If model is not available and auto_pull is enabled, try to pull it
+                if model_name not in available_models and auto_pull:
+                    logger.info(f"Model '{model_name}' not found. Attempting to pull...")
+
+                    try:
+                        # Pull the model using subprocess
+                        result = subprocess.run(
+                            ["ollama", "pull", model_name],
+                            capture_output=True,
+                            text=True,
+                            timeout=600  # 10-minute timeout for pulling
+                        )
+
+                        if result.returncode == 0:
+                            logger.info(f"Successfully pulled model: {model_name}")
+                        else:
+                            logger.error(f"Failed to pull model: {result.stderr}")
+                            raise HTTPException(
+                                status_code=400,
+                                detail=f"Failed to pull model '{model_name}': {result.stderr}"
+                            )
+
+                    except subprocess.TimeoutExpired:
+                        raise HTTPException(
+                            status_code=408,
+                            detail=f"Timeout while pulling model '{model_name}'"
+                        )
+                    except Exception as e:
+                        raise HTTPException(
+                            status_code=500,
+                            detail=f"Error pulling model '{model_name}': {str(e)}"
+                        )
+
+                elif model_name not in available_models:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Model '{model_name}' not found in Ollama. Set auto_pull=true to download it."
+                    )
 
                 # Update the current model (in memory)
                 settings.ollama_model = model_name
@@ -204,6 +257,61 @@ async def get_ollama_status():
             "host": settings.ollama_host,
             "error": str(e)
         }
+
+
+@app.post("/api/pull-model")
+async def pull_model(model_data: dict):
+    """Pull a model from Ollama registry"""
+    model_name = model_data.get('model')
+
+    if not model_name:
+        raise HTTPException(status_code=400, detail="Model name required")
+
+    # Check if model is in supported models list
+    if not is_supported_model(model_name):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Model '{model_name}' is not in the supported models list"
+        )
+
+    try:
+        import subprocess
+
+        logger.info(f"Pulling model: {model_name}")
+
+        # Pull the model using subprocess
+        result = subprocess.run(
+            ["ollama", "pull", model_name],
+            capture_output=True,
+            text=True,
+            timeout=600  # 10-minute timeout for pulling
+        )
+
+        if result.returncode == 0:
+            logger.info(f"Successfully pulled model: {model_name}")
+            return {
+                "message": f"Successfully pulled model: {model_name}",
+                "model": model_name,
+                "output": result.stdout
+            }
+        else:
+            logger.error(f"Failed to pull model: {result.stderr}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to pull model '{model_name}': {result.stderr}"
+            )
+
+    except subprocess.TimeoutExpired:
+        raise HTTPException(
+            status_code=408,
+            detail=f"Timeout while pulling model '{model_name}'"
+        )
+    except Exception as e:
+        logger.error(f"Error pulling model: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error pulling model '{model_name}': {str(e)}"
+        )
 
 
 @app.exception_handler(ImageValidationError)

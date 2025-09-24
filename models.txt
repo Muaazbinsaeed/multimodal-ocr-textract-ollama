@@ -3,7 +3,6 @@
 moondream:1.8b
 llava:latest
 llama3.2-vision:latest
-moondream:1.8b
 
 # Additional Vision Models (optional)
 # qwen2-vl:latest

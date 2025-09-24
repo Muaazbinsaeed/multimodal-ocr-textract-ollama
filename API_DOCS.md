@@ -67,9 +67,10 @@ List available Ollama models.
 **Response**:
 ```json
 {
-  "available_models": ["moondream:v2", "llava:latest"],
-  "current_model": "moondream:v2",
-  "all_models": ["moondream:v2", "llava:latest", "qwen2:1.5b"]
+  "available_models": ["moondream:1.8b"],
+  "supported_models": ["moondream:1.8b", "llava:latest", "llama3.2-vision:latest"],
+  "current_model": "moondream:1.8b",
+  "all_models": ["moondream:1.8b", "qwen2:1.5b", "nomic-embed-text:latest"]
 }
 ```
 
@@ -94,7 +95,8 @@ Switch the active Ollama model.
 **Request Body**:
 ```json
 {
-  "model": "llava:latest"
+  "model": "llava:latest",
+  "auto_pull": true
 }
 ```
 
@@ -140,6 +142,44 @@ Get detailed Ollama status information.
 **Curl Example**:
 ```bash
 curl -s http://localhost:8000/api/ollama-status | python3 -m json.tool
+```
+
+#### `POST /api/pull-model`
+Download a model from Ollama registry.
+
+**Request Body**:
+```json
+{
+  "model": "llava:latest"
+}
+```
+
+**Response**:
+```json
+{
+  "message": "Successfully pulled model: llava:latest",
+  "model": "llava:latest",
+  "output": "pulling manifest\npulling 8934d96d3226... 100%\n..."
+}
+```
+
+**Curl Example**:
+```bash
+curl -s -X POST http://localhost:8000/api/pull-model \
+  -H "Content-Type: application/json" \
+  -d '{"model": "llava:latest"}' | python3 -m json.tool
+```
+
+**Python Example**:
+```python
+import requests
+
+response = requests.post(
+    "http://localhost:8000/api/pull-model",
+    json={"model": "llava:latest"},
+    timeout=600  # 10-minute timeout for large models
+)
+print(response.json())
 ```
 
 ---
