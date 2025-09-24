@@ -2,6 +2,7 @@ import { Moon, Sun, Scan } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { ModelSelector } from "./ModelSelector";
 
 export function Header() {
   const { theme, setTheme } = useTheme();
@@ -24,7 +25,10 @@ export function Header() {
               <p className="text-xs text-muted-foreground">Extract text from images</p>
             </div>
           </div>
-          <div className="w-10 h-10" />
+          <div className="flex items-center gap-4">
+            <div className="h-8 w-32 bg-muted animate-pulse rounded" />
+            <div className="w-10 h-10" />
+          </div>
         </div>
       </header>
     );
@@ -42,17 +46,20 @@ export function Header() {
             <p className="text-xs text-muted-foreground">Extract text from images</p>
           </div>
         </div>
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          className="h-10 w-10"
-        >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+
+        <div className="flex items-center gap-4">
+          <ModelSelector />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="h-10 w-10"
+          >
+            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </div>
       </div>
     </header>
   );
