@@ -16,7 +16,7 @@ Get basic API information.
 {
   "message": "Ollama OCR API",
   "version": "1.0.0",
-  "model": "moondream:v2",
+  "model": "moondream:1.8b",
   "max_file_size_mb": 10
 }
 ```
@@ -39,7 +39,7 @@ Check API and Ollama connectivity status.
   "status": "healthy",
   "ollama_connected": true,
   "ollama_host": "http://localhost:11434",
-  "ollama_model": "moondream:v2"
+  "ollama_model": "moondream:1.8b"
 }
 ```
 
@@ -134,7 +134,7 @@ Get detailed Ollama status information.
 {
   "status": "connected",
   "host": "http://localhost:11434",
-  "current_model": "moondream:v2",
+  "current_model": "moondream:1.8b",
   "total_models": 5
 }
 ```
@@ -198,7 +198,7 @@ Extract text from an uploaded image.
 ```json
 {
   "text": "Extracted text content with description...",
-  "model": "moondream:v2",
+  "model": "moondream:1.8b",
   "usage": {
     "prompt_tokens": 150,
     "completion_tokens": 75,
@@ -367,8 +367,9 @@ if __name__ == "__main__":
    - Handle timeouts gracefully (5+ minute processing)
 
 3. **Model Selection**:
-   - Use `moondream:v2` for speed and good accuracy
+   - Use `moondream:1.8b` for speed and good accuracy
    - Use `llava:latest` for better accuracy
+   - Use `llama3.2-vision:latest` for highest accuracy
    - Switch models based on image complexity
 
 4. **Performance**:

@@ -11,35 +11,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Enhanced Model Management
 - **Model Configuration via models.txt**: Centralized model management through configuration file
-- **Automatic Model Pulling**: Auto-download missing models when switching
+- **Automatic Model Pulling**: Auto-download missing models when switching (with 10-minute timeout)
 - **New /api/pull-model endpoint**: Manual model downloading with progress feedback
 - **Enhanced Model Validation**: Validates against supported models list from models.txt
+- **model_utils.py**: Centralized utilities for reading models configuration
 
 #### Improved API Structure
 - **Updated /api/models endpoint**: Now shows both available and supported models
-- **Auto-pull support**: `/api/set-model` with configurable auto_pull parameter
-- **Better Error Handling**: Detailed error messages for model operations
+- **Auto-pull support**: `/api/set-model` with configurable auto_pull parameter (default: true)
+- **Better Error Handling**: Detailed error messages for model operations with timeout handling
+- **Enhanced Response Structure**: Clear distinction between supported vs available models
 
 #### Frontend Enhancements
 - **Model Download Buttons**: One-click download for missing supported models
-- **Real-time Progress**: Toast notifications for download/switch operations
-- **Enhanced Model Selector**: Visual indicators for model states
-- **Improved UX**: Better feedback and error handling
+- **Real-time Progress**: Toast notifications for download/switch operations with loading states
+- **Enhanced Model Selector**: Visual indicators for model states and download progress
+- **Improved UX**: Better feedback, error handling, and connection status indicators
+- **Auto-refresh**: Model list updates after successful operations
 
 #### Testing & Development
-- **Model Pulling Tests**: Comprehensive test coverage for new functionality
-- **Enhanced Test Suite**: Updated to handle new API structure
-- **Better Test Coverage**: Model management operation testing
+- **Model Pulling Tests**: Comprehensive test coverage for new functionality (7/7 tests passing)
+- **Enhanced Test Suite**: Updated API test with model management operations
+- **Better Test Coverage**: Model switching, pulling, and error handling
+- **Test Result Fix**: Fixed test summary reporting for accurate pass/fail counts
 
 ### Changed
-- **Model Management Architecture**: Refactored to use models.txt as source of truth
-- **API Response Structure**: Enhanced with supported_models field
-- **Configuration Management**: Simplified model addition/removal process
+- **Model Management Architecture**: Refactored to use models.txt as single source of truth
+- **API Response Structure**: Enhanced with supported_models and available_models fields
+- **Configuration Management**: Simplified model addition/removal through text file
+- **Default Models**: Cleaned up models.txt with proper ordering (moondream:1.8b as default)
 
 ### Fixed
-- **Models Configuration**: Removed duplicate entries, improved validation
+- **Models Configuration**: Removed duplicate moondream:latest entry from models.txt
 - **Test Files**: Fixed test image paths and validation issues
-- **Code Cleanup**: Removed unnecessary files and processes
+- **Code Cleanup**: Removed Python cache files, unnecessary processes, and system files
+- **Test Reporting**: Fixed variable name conflict in test results summary
+- **Virtual Environment**: Proper backend dependency installation and activation
 
 ## [1.0.0] - 2025-09-24
 

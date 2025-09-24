@@ -288,8 +288,8 @@ class APITester:
         passed = sum(results.values())
         total = len(results)
 
-        for test_name, passed in results.items():
-            status = "✅ PASS" if passed else "❌ FAIL"
+        for test_name, test_passed in results.items():
+            status = "✅ PASS" if test_passed else "❌ FAIL"
             print(f"{test_name:15} {status}")
 
         print(f"\nResults: {passed}/{total} tests passed")
