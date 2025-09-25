@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-09-25
+
+### Added
+
+#### Complete Infrastructure & Control Scripts
+- **Service Management Scripts**: start.sh, stop.sh, restart.sh for local services
+- **Docker Control Script**: docker-control.sh with comprehensive Docker management
+- **Test Script**: test.sh for running all available test suites
+- **Enhanced Setup Script**: Better error handling and fallback package installation
+
+#### Docker & Build Improvements
+- **Fixed Docker Issues**: Updated Dockerfiles with proper dependency handling
+- **Added .dockerignore Files**: Optimized Docker builds for backend and frontend
+- **Fixed pyproject.toml**: Added hatchling package specification to resolve build errors
+- **Updated Docker Compose**: Corrected model configuration to moondream:1.8b
+
+#### Configuration Standardization
+- **Fixed .env.example**: Updated model reference from moondream:v2 to moondream:1.8b
+- **Consistent Model Names**: All configuration files now use correct model names
+- **Improved Error Handling**: Better fallback mechanisms in setup processes
+
+### Changed
+- **README.md**: Comprehensive update with control scripts documentation
+- **Installation Process**: Three clear options (Auto Setup, Docker, Manual)
+- **Script Architecture**: All scripts are executable and follow consistent patterns
+- **Error Handling**: Improved robustness in setup and installation processes
+
+### Fixed
+- **Docker Build Process**: Resolved hatchling build failures
+- **npm Installation**: Added --legacy-peer-deps fallback for compatibility
+- **Model Configuration**: Consistent use of moondream:1.8b across all configs
+- **Script Permissions**: All scripts properly executable with chmod +x
+
+### Technical Improvements
+- **Service Management**: Proper process cleanup and port management
+- **Docker Orchestration**: Complete lifecycle management (up, down, logs, status, clean)
+- **Testing Framework**: Unified testing approach across shell and Python
+- **Documentation**: Clear instructions for all deployment methods
+
 ## [1.1.0] - 2025-09-24
 
 ### Added

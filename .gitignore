@@ -79,3 +79,12 @@ build/
 *.tmp
 *.temp
 .cache/
+
+# Docker
+docker-compose.override.yml
+
+# Test files
+test_image.jpg
+test_image.png
+sample_*.jpg
+sample_*.png

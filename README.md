@@ -6,6 +6,7 @@ A full-stack web application for extracting text from images using local Ollama 
 
 - 🖼️ **Image Upload**: Drag & drop or click to upload PNG, JPEG, WebP images (up to 10MB)
 - 🤖 **Local AI**: Uses local Ollama multimodal models (moondream:1.8b, llava, llama3.2-vision)
+- 🔄 **Model Switching**: Dynamic model selection and auto-download from models.txt configuration
 - 📝 **Smart OCR + Description**: Extracts text AND provides intelligent image descriptions
 - 🔒 **Privacy First**: No data leaves your machine - all processing is local
 - ⚡ **Extended Processing**: Handles complex images with up to 5-minute processing time
@@ -35,31 +36,41 @@ A full-stack web application for extracting text from images using local Ollama 
 1. **Docker & Docker Compose** (recommended) OR
 2. **Node.js 18+**, **Python 3.11+**, and **Ollama** installed locally
 
-### Option 1: Docker (Recommended)
+### Option 1: Auto Setup Script (Recommended)
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Muaazbinsaeed/multimodal-ocr-textract-ollama.git
    cd multimodal-ocr-textract-ollama
    ```
 
-2. **Start all services**:
+2. **Run the setup script**:
    ```bash
-   docker-compose up --build
+   # Full setup with testing
+   bash scripts/setup.sh --test
+
+   # Quick setup without tests
+   bash scripts/setup.sh
    ```
 
-3. **Pull the Ollama model** (in another terminal):
-   ```bash
-   # Wait for services to start, then:
-   docker-compose exec ollama ollama pull llava
-   ```
-
-4. **Access the application**:
+3. **Access the application**:
    - Frontend: http://localhost:8080
    - Backend API: http://localhost:8000
    - API docs: http://localhost:8000/docs
 
-### Option 2: Local Development
+### Option 2: Docker
+
+1. **Start services**:
+   ```bash
+   bash scripts/docker-control.sh up
+   ```
+
+2. **Pull models**:
+   ```bash
+   bash scripts/docker-control.sh pull
+   ```
+
+### Option 3: Manual Local Development
 
 #### 1. Setup Ollama
 
@@ -72,8 +83,10 @@ brew install ollama
 # Start Ollama service
 ollama serve
 
-# Pull a multimodal model
-ollama pull llava
+# Pull models from models.txt
+ollama pull moondream:1.8b
+ollama pull llava:latest
+ollama pull llama3.2-vision:latest
 ```
 
 #### 2. Setup Backend
@@ -81,10 +94,14 @@ ollama pull llava
 ```bash
 cd backend
 
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
 # Install dependencies
 pip install -e .
 
-# Optional: Configure environment
+# Configure environment
 cp .env.example .env
 
 # Start the backend
@@ -97,10 +114,62 @@ uvicorn app.main:app --reload
 cd frontend
 
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 
 # Start development server
 npm run dev
+```
+
+## 🎮 Control Scripts
+
+The project includes comprehensive control scripts for easy management:
+
+### Service Management
+```bash
+# Start all services
+bash scripts/start.sh
+
+# Stop all services
+bash scripts/stop.sh
+
+# Restart all services
+bash scripts/restart.sh
+
+# Run tests
+bash scripts/test.sh
+```
+
+### Docker Management
+```bash
+# Start Docker services
+bash scripts/docker-control.sh up
+
+# Stop Docker services
+bash scripts/docker-control.sh down
+
+# View Docker logs
+bash scripts/docker-control.sh logs
+
+# Pull Ollama models in Docker
+bash scripts/docker-control.sh pull
+
+# Show container status
+bash scripts/docker-control.sh status
+
+# Clean up Docker resources
+bash scripts/docker-control.sh clean
+```
+
+### Setup Options
+```bash
+# Full setup with tests
+bash scripts/setup.sh --test
+
+# Setup with frontend build
+bash scripts/setup.sh --build
+
+# Docker setup
+bash scripts/setup.sh --docker
 ```
 
 #### 4. Test the Integration

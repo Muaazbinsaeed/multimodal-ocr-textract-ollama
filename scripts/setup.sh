@@ -164,10 +164,15 @@ setup_backend() {
     # Activate virtual environment
     source venv/bin/activate
 
-    # Install dependencies
+    # Install dependencies with better error handling
     echo "   Installing backend dependencies..."
     pip install --upgrade pip
-    pip install -e .
+
+    # Try pip install -e . first, fall back to individual packages if it fails
+    if ! pip install -e . 2>/dev/null; then
+        echo "   Editable install failed, installing dependencies directly..."
+        pip install fastapi "uvicorn[standard]" httpx pydantic pydantic-settings python-multipart pillow python-magic
+    fi
 
     # Create .env from .env.example if it doesn't exist
     if [ ! -f ".env" ] && [ -f ".env.example" ]; then
@@ -185,9 +190,12 @@ setup_frontend() {
 
     cd "$FRONTEND_DIR"
 
-    # Install dependencies
+    # Install dependencies with better error handling
     echo "   Installing frontend dependencies..."
-    npm install
+    if ! npm install 2>/dev/null; then
+        echo "   Standard install failed, trying with --legacy-peer-deps..."
+        npm install --legacy-peer-deps
+    fi
 
     # Build frontend (optional)
     if [ "$1" = "--build" ]; then
